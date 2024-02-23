@@ -3,9 +3,11 @@ package com.example.cloudvr
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,6 +28,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -66,8 +69,9 @@ fun MySetting() {
     var serverPort by remember {
         mutableStateOf("")
     }
-    val protocolList = listOf("http", "https")
-    var expanded by remember { mutableStateOf(false) }
+
+    val options =listOf("http","https")
+    var serverProtocol by remember { mutableStateOf(options[0])}
 
 
 //                获取保存的服务器信息
@@ -75,15 +79,21 @@ fun MySetting() {
     val savedServerUrl = prefs.getString("serverUrl", "")
     val savedServerIP = prefs.getString("serverIP", "")
     val savedServerPort = prefs.getString("serverPort", "")
+    val savedServerProtocol = prefs.getString("serverProtocol", "")
 
     if (!savedServerUrl.isNullOrEmpty() && !savedServerIP.isNullOrEmpty() && !savedServerPort.isNullOrEmpty()) {
         serverUrl = savedServerUrl
         serverIP = savedServerIP
         serverPort = savedServerPort
+        if(!savedServerProtocol.isNullOrEmpty()){
+            serverProtocol = savedServerProtocol
+        }
     }
 
     Box(
-        modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
         contentAlignment = Alignment.Center
     ){
         Card(
@@ -93,11 +103,13 @@ fun MySetting() {
             Column(
                 modifier = Modifier
                     .background(Bg)
-                    .padding(33.dp,22.dp),
+                    .padding(33.dp, 22.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ){
-                Box(modifier = Modifier.fillMaxWidth().padding(bottom = 32.dp),contentAlignment = Alignment.CenterStart){
+                Box(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 32.dp),contentAlignment = Alignment.CenterStart){
                     Image(
                         painter = painterResource(R.drawable.settinggreen),
                         contentDescription = null,
@@ -111,19 +123,33 @@ fun MySetting() {
                     )
                 }
 
-//                DropdownMenu(
-//                    expanded = expanded,
-//                    onDismissRequest = { expanded = false }
-//                ) {
-//                    protocolList.forEachIndexed { index, text ->
-//                        DropdownMenuItem(onClick = {
-//                            println("Menu item clicked: index=$index, text=$text")
-//                            expanded = false
-//                        }) {
-//                            Text(text = text) // 请确保传递了选项文本
-//                        }
-//                    }
-//                }
+
+
+                Row(horizontalArrangement = Arrangement.Start,modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 10.dp)) {
+                    options.forEach { option ->
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(end = 16.dp),
+                        ) {
+                            RadioButton(
+                                selected = option == serverProtocol,
+                                onClick = { serverProtocol = option }
+                            )
+                            Text(
+                                text = option,
+                                fontSize = 20.sp,
+                                color = Color.White,
+                                style = MaterialTheme.typography.bodyLarge,
+                                modifier = Modifier
+                                    .padding(start = 3.dp)
+                                    .clickable { serverProtocol = option }
+                            )
+                        }
+                    }
+                }
+
 
                 LabeledInput("中心服务器URL", serverUrl, onValueChange = {
                     serverUrl = it
@@ -159,6 +185,7 @@ fun MySetting() {
                                 prefs.edit().putString("serverUrl", serverUrl).apply()
                                 prefs.edit().putString("serverIP", serverIP).apply()
                                 prefs.edit().putString("serverPort", serverPort).apply()
+                                prefs.edit().putString("serverProtocol", serverProtocol).apply()
                                 setBaseUrl()
                                 Toast.makeText(appContext, "修改成功！", Toast.LENGTH_SHORT).show();
                                 prefs.edit().remove("userId").apply()
@@ -169,7 +196,8 @@ fun MySetting() {
                             ),
                             modifier = Modifier
                                 .height(40.dp)
-                                .width(120.dp).padding(start = 20.dp),
+                                .width(120.dp)
+                                .padding(start = 20.dp),
                             shape = MaterialTheme.shapes.extraLarge
                         ) {
                             Text(text = "确定", color = Color.White, fontSize = 14.sp)
@@ -188,7 +216,9 @@ fun LabeledInput(
     value: String,
     onValueChange: (String) -> Unit,
 ) {
-    Column(modifier = Modifier.fillMaxWidth().background(Bg)) {
+    Column(modifier = Modifier
+        .fillMaxWidth()
+        .background(Bg)) {
         Text(
             text = label,
             color = Color.White,

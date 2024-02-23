@@ -9,11 +9,17 @@ import com.example.cloudvr.api.service.ProjectIPService
 import com.example.cloudvr.api.service.ProjectListService
 import com.example.cloudvr.api.service.ProjectTokenService
 import com.example.cloudvr.api.service.StartProjectService
+import com.example.cloudvr.api.service.StartWebUIService
 import com.example.cloudvr.entity.GetProjectIDAndTaskIdDataResponse
 import com.example.cloudvr.entity.ProjectListEntity
 import com.example.cloudvr.entity.ProjectTokenDataResponse
 import com.example.cloudvr.entity.StartProjectResponse
+import com.example.cloudvr.entity.StartWebUIResponse
 import com.example.cloudvr.module.appContext
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.internal.http2.Http2Reader.Companion.logger
 
 class ProjectListViewModel : ViewModel() {
@@ -85,12 +91,29 @@ class ProjectListViewModel : ViewModel() {
     //    获取项目ip和taskid
     suspend fun getIPAndTaskId(appliId: String, token: String): GetProjectIDAndTaskIdDataResponse {
         val service = ProjectIPService.instance()
-        return service.getProjectIDAndTaskId(appliId, plateType = "2", token)
+        return service.getProjectIDAndTaskId(appliId,"2",token)
     }
 
     //    启动vr
     suspend fun startVr(appliId: String, token: String,senderId: String,nonce: String,hostId: String,mode: String,taskId: String,accessMode: String): StartProjectResponse {
         val service = StartProjectService.instance()
         return service.startProject(appliId, plateType = "2",token,senderId,nonce,hostId,mode,taskId,accessMode)
+    }
+
+    suspend fun startWebUI(taskid: String, nonce: String, sender_id: String): StartWebUIResponse {
+        val service = StartWebUIService.instance()
+        val json = """
+            {
+                taskid:$taskid,
+                nonce:$nonce,
+                sender_id:$sender_id,
+                "ReqData": {
+                    "data": "北京",
+                    "msgType": "WebUiUrl",
+                }
+            }
+        """.trimIndent()
+        val requestBody = json.toRequestBody("application/json".toMediaTypeOrNull())
+        return service.StartWebUI("RpcReq",requestBody)
     }
 }

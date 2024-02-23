@@ -39,6 +39,7 @@ open class HomeActivity : ComponentActivity() {
             prefs.edit().putString("serverUrl", "test.ourbim.com").apply()
             prefs.edit().putString("serverIP", "172.16.100.102").apply()
             prefs.edit().putString("serverPort", "11011").apply()
+            prefs.edit().putString("serverProtocol", "http").apply()
 //            prefs.edit().putString("serverUrl", "api.ourbim.com").apply()
 //            prefs.edit().putString("serverIP", "42.81.206.139").apply()
 //            prefs.edit().putString("serverPort", "11023").apply()

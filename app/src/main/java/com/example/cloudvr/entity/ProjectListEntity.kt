@@ -53,3 +53,6 @@ data class StartProjectResponse(override val code: Int, override val message: St
     message
 )
 
+data class StartWebUIResponse(override val success: Boolean, override val msg: String) : BaseMessageRpc(success,
+    msg
+)

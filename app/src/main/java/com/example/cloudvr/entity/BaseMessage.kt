@@ -6,3 +6,7 @@ open class BaseMessage(
     open val message: String = ""
 )
 
+open class BaseMessageRpc(
+    open val success: Boolean,
+    open val msg: String = ""
+)

@@ -10,7 +10,7 @@ import com.example.cloudvr.module.appContext
 import android.content.Context
 
 
-object Network {
+object NetworkRpc {
 
     private var retrofit = Retrofit.Builder()
         .baseUrl(getBaseUrl())
@@ -21,7 +21,6 @@ object Network {
                     .build()
             )
         ).build()
-//        .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
 
 
     fun <T> createService(clazz: Class<T>): T {
@@ -45,8 +44,7 @@ object Network {
         val prefs: SharedPreferences =
             appContext.getSharedPreferences("my_preferences", Context.MODE_PRIVATE)
         val savedServerUrl = prefs.getString("serverUrl", "")
-        val savedServerPort = prefs.getString("serverPort", "")
         val serverProtocol = prefs.getString("serverProtocol", "")
-        return "$serverProtocol://$savedServerUrl:$savedServerPort/vjapi/"
+        return "$serverProtocol://$savedServerUrl:14041/api/v1/"
     }
 }

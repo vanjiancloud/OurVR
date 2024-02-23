@@ -434,18 +434,28 @@ fun startVrPre(){
     }
 }
 
+//启动webui
+fun startWebUI(){
+    val prefs: SharedPreferences = appContext.getSharedPreferences("my_preferences", Context.MODE_PRIVATE)
+    val savedServerUrl = prefs.getString("serverUrl", "")
+    val serverProtocol = prefs.getString("serverProtocol", "")
+    var url = "$serverProtocol://$savedServerUrl:14041/api/v1/RpcReq"
+
+}
+
 //跳去模型
 fun toModel(){
     val prefs: SharedPreferences = appContext.getSharedPreferences("my_preferences", Context.MODE_PRIVATE)
     val savedServerUrl = prefs.getString("serverUrl", "")
     val savedServerIP = prefs.getString("serverIP", "")
+    val serverProtocol = prefs.getString("serverProtocol", "")
 
     val intent = Intent(MyApplication.instance, MainActivity::class.java)
 
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     intent.putExtra("ProjectID", projectId)
     val nonce = UUID.randomUUID().toString()
-    val reqUrl="http://$savedServerUrl:14041/api/v1/StartupInsByProjectId?&tag=vr&mode=reboot&HostId=$savedServerIP&ProjectId="+
+    val reqUrl="$serverProtocol://$savedServerUrl:14041/api/v1/StartupInsByProjectId?&tag=vr&mode=reboot&HostId=$savedServerIP&ProjectId="+
             projectId+"&SenderId="+ VjMD5Tool.GetHardId()+"&nonce="+nonce;
     intent.putExtra("reqUrl", reqUrl)
 

@@ -1,13 +1,22 @@
 package com.example.cloudvr.api.service
 
 import com.example.cloudvr.api.Network
+import com.example.cloudvr.api.NetworkRpc
 import com.example.cloudvr.entity.GetProjectIDAndTaskIdDataResponse
 import com.example.cloudvr.entity.ProjectListResponse
 import com.example.cloudvr.entity.ProjectTokenDataResponse
 import com.example.cloudvr.entity.StartProjectResponse
+import com.example.cloudvr.entity.StartWebUIResponse
+import okhttp3.RequestBody
+import retrofit2.http.Body
+import retrofit2.http.Field
+import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
+import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
+import retrofit2.http.Url
 
 interface ProjectListService {
 
@@ -48,7 +57,7 @@ interface ProjectIPService {
         @Query("appliId") appliId: String,
         @Query("plateType") plateType: String,//2：vr 3：ar
         @Query("token") token: String,
-    ): GetProjectIDAndTaskIdDataResponse
+     ): GetProjectIDAndTaskIdDataResponse
 
     companion object {
         fun instance(): ProjectIPService {
@@ -75,6 +84,20 @@ interface StartProjectService {
     companion object {
         fun instance(): StartProjectService {
             return Network.createService(StartProjectService::class.java)
+        }
+    }
+}
+
+interface StartWebUIService {
+    @POST("{url}")
+    suspend fun StartWebUI(
+        @Url url: String, // 请求 URL
+        @Body requestBody: RequestBody // 请求体
+    ): StartWebUIResponse
+
+    companion object {
+        fun instance(): StartWebUIService {
+            return NetworkRpc.createService(StartWebUIService::class.java)
         }
     }
 }
