@@ -44,7 +44,6 @@ object NetworkRpc {
         val prefs: SharedPreferences =
             appContext.getSharedPreferences("my_preferences", Context.MODE_PRIVATE)
         val savedServerUrl = prefs.getString("serverUrl", "")
-        val serverProtocol = prefs.getString("serverProtocol", "")
-        return "$serverProtocol://$savedServerUrl:14041/api/v1/"
+        return "https://$savedServerUrl:14041/"
     }
 }

@@ -48,9 +48,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cloudvr.module.appContext
-import com.example.cloudvr.ui.theme.InputDefault
-import com.example.cloudvr.ui.theme.InputFocus
 import com.example.cloudvr.ui.theme.*
+import com.picovr.cloudxr.VjDevice
 import com.example.cloudvr.viewModel.UserViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -88,9 +87,27 @@ fun Login(){
     }
 
 
+    println("设备信息----本地IP:${VjDevice.getIPAddress()}")
+    println("设备信息----网络名称:${VjDevice.getNetworkName()}")
+    println("设备信息----设备型号:${VjDevice.getDeviceModel()}")
+    println("设备信息----内存:${VjDevice.getDeviceMemory(appContext)}")
+    println("设备信息----存储:${VjDevice.getDeviceStorage(appContext,0)}")
+    println("设备信息----SDK版本:${VjDevice.getDeviceSDK()}")
+    println("设备信息----android版本:${VjDevice.getDeviceAndroidVersion()}")
+    println("设备信息----电量百分比:${VjDevice.getDeviceBattery(appContext)}")
+    println("设备信息----设备标识符:${VjDevice.getDeviceId(appContext)}")
+
+    println("设备信息----制造商:${VjDevice.getDeviceManufacturer()}")
+    println("设备信息----设备名:${VjDevice.getDeviceName()}")
+    println("设备信息----产品名:${VjDevice.getProductName()}")
+    println("设备信息----品牌:${VjDevice.getDeviceBrand()}")
+    println("设备信息----硬件:${VjDevice.getDeviceHardware()}")
+
 
     Box(
-        modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
         contentAlignment = Alignment.Center
     ) {
         Card(
@@ -107,7 +124,7 @@ fun Login(){
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 16.dp),
+                        .padding(bottom = 4.dp),
                     verticalAlignment = Alignment.CenterVertically,
 
                     ) {
@@ -128,9 +145,11 @@ fun Login(){
                     Image(
                         painter = painterResource(R.drawable.setting),
                         contentDescription = null,
-                        modifier = Modifier.size(22.dp).clickable {
-                            navController.navigate("setting")
-                        }
+                        modifier = Modifier
+                            .size(22.dp)
+                            .clickable {
+                                navController.navigate("setting")
+                            }
                     )
 
                 }
@@ -143,14 +162,14 @@ fun Login(){
                             color = InputFocus,
                             shape = MaterialTheme.shapes.small
                         )
-                        .width(50.dp)
-                        .height(50.dp),
+                        .width(46.dp)
+                        .height(46.dp),
                     contentAlignment = Alignment.Center
                 ) {
                     Image(
                         painter = painterResource(R.drawable.logo),
                         contentDescription = null,
-                        modifier = Modifier.size(30.dp)
+                        modifier = Modifier.size(28.dp)
                     )
                 }
 
@@ -191,7 +210,7 @@ fun Login(){
                     }
                 }
 
-                Spacer(modifier = Modifier.height(5.dp))
+                Spacer(modifier = Modifier.height(4.dp))
 
                 Button(
                     onClick = {
@@ -234,7 +253,9 @@ fun Login(){
                     shape = MaterialTheme.shapes.extraLarge
                 ) {
                     if (isLoading) {
-                        CircularProgressIndicator(modifier=Modifier.width(30.dp).padding(top = 3.dp,end=10.dp))
+                        CircularProgressIndicator(modifier= Modifier
+                            .width(30.dp)
+                            .padding(top = 3.dp, end = 10.dp))
                     }
                     Text(text = "登录", color = Color.White, fontSize = 14.sp)
                 }
@@ -276,7 +297,9 @@ fun Input(
             onValueChange = onValueChange,
             placeholder = { Text(placeholder) },
             keyboardOptions = keyboardOptions,
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier
+                .padding(8.dp)
+                .height(50.dp),
             colors = colors
         )
     }

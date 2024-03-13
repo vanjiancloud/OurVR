@@ -68,6 +68,7 @@ import com.picovr.cloudxr.MainActivity
 import com.picovr.cloudxr.VjMD5Tool
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.UUID
 
@@ -374,6 +375,7 @@ fun ExitDialog(
 var projectId = ""
 fun startProject(item: ProjectListEntity){
     projectId = item.appid
+
     startVrPre()
     receiverIntent()
 }
@@ -383,27 +385,31 @@ fun receiverIntent(){
     //    接收
     val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            println("接收$intent")
             // 在这里处理接收到的广播内容
-            val data = intent?.getStringExtra("CONTENT")
-            println("接收$data")
+            val data = intent?.getIntExtra("CONTENT",-1)
+            println("vjSendBroadcast---------------$data")
             // 加载模型
-            if(data == "3"){
+            if(data == 3){
                 val nonce = UUID.randomUUID().toString()
-                if (taskId != null) {
+                if (!taskId.isNullOrEmpty()&&!projectId.isNullOrEmpty()) {
                     CoroutineScope(Dispatchers.Main).launch {
+//                        delay(10000)
                         ProjectListViewModel().startVr(appliId=projectId,token,senderId=VjMD5Tool.GetHardId(),nonce,hostId,mode="reboot",taskId,accessMode="1")
                         println("启动成功！")
                     }
                 }
             }
 //            退出
-            if(data == "99"){
-
-            }
+//            else if(data == 99){
+//                CoroutineScope(Dispatchers.Main).launch {
+//                    closeStream()
+//                    ProjectListViewModel().closeVr("-taskid=$taskId",taskId)
+//                    println("关闭")
+//                }
+//            }
         }
     }
-    val filter = IntentFilter("com.picovr.cloudxr.action.CLOUDXR_STATUS_CHANGE")
+    val filter = IntentFilter(MainActivity.EVENT_CLOUDXR_STATUS_CHANGE)
     MyApplication.instance.registerReceiver(receiver, filter)
 }
 
@@ -425,7 +431,7 @@ fun startVrPre(){
                     Toast.makeText(appContext, projectMess.message, Toast.LENGTH_SHORT).show()
                 }
             }else{
-                Toast.makeText(appContext, res?.message, Toast.LENGTH_SHORT).show()
+                Toast.makeText(appContext, res.message, Toast.LENGTH_SHORT).show()
             }
         } catch (e: Exception) {
             // 处理异常
@@ -435,30 +441,36 @@ fun startVrPre(){
 }
 
 //启动webui
-fun startWebUI(){
-    val prefs: SharedPreferences = appContext.getSharedPreferences("my_preferences", Context.MODE_PRIVATE)
-    val savedServerUrl = prefs.getString("serverUrl", "")
-    val serverProtocol = prefs.getString("serverProtocol", "")
-    var url = "$serverProtocol://$savedServerUrl:14041/api/v1/RpcReq"
-
-}
+//fun startWebUI(){
+//    val prefs: SharedPreferences = appContext.getSharedPreferences("my_preferences", Context.MODE_PRIVATE)
+//    val savedServerUrl = prefs.getString("serverUrl", "")
+//    var url = "https://$savedServerUrl:14041/api/v1/RpcReq"
+//
+//}
 
 //跳去模型
 fun toModel(){
     val prefs: SharedPreferences = appContext.getSharedPreferences("my_preferences", Context.MODE_PRIVATE)
     val savedServerUrl = prefs.getString("serverUrl", "")
     val savedServerIP = prefs.getString("serverIP", "")
-    val serverProtocol = prefs.getString("serverProtocol", "")
 
     val intent = Intent(MyApplication.instance, MainActivity::class.java)
 
-    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-    intent.putExtra("ProjectID", projectId)
-    val nonce = UUID.randomUUID().toString()
-    val reqUrl="$serverProtocol://$savedServerUrl:14041/api/v1/StartupInsByProjectId?&tag=vr&mode=reboot&HostId=$savedServerIP&ProjectId="+
-            projectId+"&SenderId="+ VjMD5Tool.GetHardId()+"&nonce="+nonce;
-    intent.putExtra("reqUrl", reqUrl)
+    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    intent.putExtra("serverUrl", savedServerUrl)
+    intent.putExtra("serverIP", savedServerIP)
+    intent.putExtra("projectId", projectId)
+    intent.putExtra("taskId", taskId)
 
     MyApplication.instance.startActivity(intent)
+}
+
+fun closeStream(){
+    CoroutineScope(Dispatchers.Main).launch {
+        val prefs: SharedPreferences = appContext.getSharedPreferences("my_preferences", Context.MODE_PRIVATE)
+        val savedServerIP = prefs.getString("serverIP", "")
+        val nonce = UUID.randomUUID().toString()
+        ProjectListViewModel().closeStream(VjMD5Tool.GetHardId(),savedServerIP,nonce,"vr","reboot",taskId)
+    }
 }
 

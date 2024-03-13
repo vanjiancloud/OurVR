@@ -5,6 +5,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import com.example.cloudvr.api.service.CloseStreamService
+import com.example.cloudvr.api.service.CloseVrService
 import com.example.cloudvr.api.service.ProjectIPService
 import com.example.cloudvr.api.service.ProjectListService
 import com.example.cloudvr.api.service.ProjectTokenService
@@ -51,10 +53,10 @@ class ProjectListViewModel : ViewModel() {
                 if (pageNo != 1) {
                     tmpList.addAll(list)
                 }
-                tmpList.addAll(res.data.list!!)
+                tmpList.addAll(res.data.list)
                 list = tmpList
                 //是否还有更多数据
-                hasMore = list!!.size < res.data.total
+                hasMore = list.size < res.data.total
                 listLoaded = false
                 refreshing = false
             } else {
@@ -114,6 +116,14 @@ class ProjectListViewModel : ViewModel() {
             }
         """.trimIndent()
         val requestBody = json.toRequestBody("application/json".toMediaTypeOrNull())
-        return service.StartWebUI("RpcReq",requestBody)
+        return service.StartWebUI("api/v1/RpcReq",requestBody)
+    }
+    suspend fun closeVr(tag: String,taskid: String): StartWebUIResponse {
+        val service = CloseVrService.instance()
+        return service.closeVr(tag,taskid)
+    }
+    suspend fun closeStream(SenderId: String,HostId: String?,nonce:String,tag:String,mode:String,taskid: String): StartWebUIResponse {
+        val service = CloseStreamService.instance()
+        return service.closeVr(SenderId,HostId,nonce,tag,mode,taskid)
     }
 }

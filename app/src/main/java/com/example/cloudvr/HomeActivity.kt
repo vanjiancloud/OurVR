@@ -1,10 +1,10 @@
 package com.example.cloudvr
 
 
-import android.content.BroadcastReceiver
+
+import android.app.Activity
+import android.app.Application
 import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -36,20 +36,16 @@ open class HomeActivity : ComponentActivity() {
         val savedServerUrl = prefs.getString("serverUrl", "")
         val savedServerPort = prefs.getString("serverPort", "")
         if (savedServerUrl.isNullOrEmpty() || savedServerPort.isNullOrEmpty()) {
-            prefs.edit().putString("serverUrl", "test.ourbim.com").apply()
-            prefs.edit().putString("serverIP", "172.16.100.102").apply()
-            prefs.edit().putString("serverPort", "11011").apply()
-            prefs.edit().putString("serverProtocol", "http").apply()
-//            prefs.edit().putString("serverUrl", "api.ourbim.com").apply()
-//            prefs.edit().putString("serverIP", "42.81.206.139").apply()
-//            prefs.edit().putString("serverPort", "11023").apply()
+            prefs.edit().putString("serverUrl", "api.ourbim.com").apply()
+            prefs.edit().putString("serverIP", "42.81.206.139").apply()
+            prefs.edit().putString("serverPort", "11023").apply()
+            prefs.edit().putString("serverProtocol", "https").apply()
         }
 
 
 
         //TODO  写死进入B作为校验
 //        startActivity(Intent(this,MainActivity::class.java))
-//        receiverIntent()
         setContent {
             CloudVRTheme {
 //                // A surface container using the 'background' color from the theme
@@ -61,6 +57,45 @@ open class HomeActivity : ComponentActivity() {
                 }
             }
         }
+
+
+        // 添加应用程序生命周期监听器
+        registerActivityLifecycleCallbacks(object : Application.ActivityLifecycleCallbacks {
+            override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+                // Activity 创建时的回调
+                println("Activity创建时的回调")
+            }
+
+            override fun onActivityStarted(activity: Activity) {
+                // Activity 启动时的回调
+                println("Activity启动时的回调")
+            }
+
+            override fun onActivityResumed(activity: Activity) {
+                // Activity 恢复时的回调
+                println("Activity恢复时的回调")
+            }
+
+            override fun onActivityPaused(activity: Activity) {
+                // Activity 暂停时的回调
+                println("Activity暂停时的回调")
+            }
+
+            override fun onActivityStopped(activity: Activity) {
+                // Activity 停止时的回调
+                println("Activity停止时的回调")
+            }
+
+            override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
+                // Activity 保存状态时的回调
+                println("Activity保存状态时的回调")
+            }
+
+            override fun onActivityDestroyed(activity: Activity) {
+                // Activity 销毁时的回调
+                println("Activity销毁时的回调")
+            }
+        })
     }
 }
 
@@ -73,13 +108,10 @@ val LocalNavController = compositionLocalOf<NavController> { error("No NavContro
 @Composable
 fun GreetingPreview() {
     val navController = rememberNavController()
+    //            是否登录
+    val userViewModel = UserViewModel()
     CompositionLocalProvider(LocalNavController provides navController) {
-        NavHost(navController = navController, startDestination = "Login"){
-//            是否登录
-            val userViewModel = UserViewModel()
-            if(userViewModel.userId === ""){
-                composable("Login"){ Login() }
-            }
+        NavHost(navController = navController, startDestination = if (!userViewModel.userId.isNullOrEmpty()) "projectList" else "Login"){
             composable("Login"){ Login() }
             composable("projectList"){ MyComposablePreview() }
             composable("setting"){ MySetting() }
@@ -87,22 +119,3 @@ fun GreetingPreview() {
     }
 }
 
-//fun receiverIntent(){
-//    //    接收
-//    println("接收1")
-//    val receiver = object : BroadcastReceiver() {
-//        override fun onReceive(context: Context?, intent: Intent?) {
-//            println("接收$intent")
-//            // 在这里处理接收到的广播内容
-//            val data = intent?.getStringExtra("CONTENT")
-//            println("接收$data")
-//            // 处理接收到的数据
-//            if(data == "99"){
-//
-//            }
-//        }
-//    }
-//    val filter = IntentFilter("com.picovr.cloudxr.action.CLOUDXR_STATUS_CHANGE")
-//    println("接收1$receiver$filter")
-//    MyApplication.instance.registerReceiver(receiver, filter)
-//}

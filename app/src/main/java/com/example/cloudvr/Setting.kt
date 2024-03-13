@@ -98,7 +98,7 @@ fun MySetting() {
     ){
         Card(
             modifier = Modifier.padding(15.dp),
-            shape = MaterialTheme.shapes.medium
+            shape = MaterialTheme.shapes.medium,
         ){
             Column(
                 modifier = Modifier
@@ -125,9 +125,7 @@ fun MySetting() {
 
 
 
-                Row(horizontalArrangement = Arrangement.Start,modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 10.dp)) {
+                Row(horizontalArrangement = Arrangement.Start,modifier = Modifier.padding(bottom = 10.dp)) {
                     options.forEach { option ->
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
@@ -164,6 +162,7 @@ fun MySetting() {
                 Box {
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(top = 10.dp)
                     ) {
                         Button(
                             onClick = {
@@ -187,7 +186,7 @@ fun MySetting() {
                                 prefs.edit().putString("serverPort", serverPort).apply()
                                 prefs.edit().putString("serverProtocol", serverProtocol).apply()
                                 setBaseUrl()
-                                Toast.makeText(appContext, "修改成功！", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(appContext, "修改成功！", Toast.LENGTH_SHORT).show()
                                 prefs.edit().remove("userId").apply()
                             },
                             colors = ButtonDefaults.buttonColors(
@@ -216,9 +215,7 @@ fun LabeledInput(
     value: String,
     onValueChange: (String) -> Unit,
 ) {
-    Column(modifier = Modifier
-        .fillMaxWidth()
-        .background(Bg)) {
+    Column(modifier = Modifier.background(Bg).padding(bottom = 6.dp)) {
         Text(
             text = label,
             color = Color.White,

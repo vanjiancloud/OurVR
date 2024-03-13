@@ -101,3 +101,35 @@ interface StartWebUIService {
         }
     }
 }
+
+interface CloseVrService {
+    @GET("online/api/v1/task/ShutDownProcessByTag")
+    suspend fun closeVr(
+        @Query("tag") tag: String,
+        @Query("taskid") taskid: String,
+    ): StartWebUIResponse
+
+    companion object {
+        fun instance(): CloseVrService {
+            return NetworkRpc.createService(CloseVrService::class.java)
+        }
+    }
+}
+
+interface CloseStreamService {
+    @GET("api/v1/StartupInsByProjectId")
+    suspend fun closeVr(
+        @Query("SenderId") SenderId: String,
+        @Query("HostId") HostId: String?,
+        @Query("nonce") nonce: String,
+        @Query("tag") tag: String,
+        @Query("mode") mode: String,
+        @Query("taskid") taskid: String,
+    ): StartWebUIResponse
+
+    companion object {
+        fun instance(): CloseStreamService {
+            return NetworkRpc.createService(CloseStreamService::class.java)
+        }
+    }
+}
