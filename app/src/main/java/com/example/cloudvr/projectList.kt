@@ -73,10 +73,11 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 
 
-
+var publicIp = ""
 var hostId = ""
 var taskId = ""
 var token = ""
+
 
 @Preview
 @OptIn(com.google.accompanist.pager.ExperimentalPagerApi::class)
@@ -377,7 +378,6 @@ fun startProject(item: ProjectListEntity){
     projectId = item.appid
 
     startVrPre()
-    receiverIntent()
 }
 
 
@@ -394,8 +394,8 @@ fun receiverIntent(){
                 if (!taskId.isNullOrEmpty()&&!projectId.isNullOrEmpty()) {
                     CoroutineScope(Dispatchers.Main).launch {
 //                        delay(10000)
-                        ProjectListViewModel().startVr(appliId=projectId,token,senderId=VjMD5Tool.GetHardId(),nonce,hostId,mode="reboot",taskId,accessMode="1")
-                        println("启动成功！")
+                        val res = ProjectListViewModel().startVr(appliId=projectId,token,senderId= VjMD5Tool.GetHardId(),nonce,hostId,mode="reboot",taskId,accessMode="1")
+                        println("启动成功！$res----$projectId---$taskId------$nonce---$hostId")
                     }
                 }
             }
@@ -425,8 +425,13 @@ fun startVrPre(){
                 if(projectMess.code==0){
                     val data = projectMess.data
                     hostId = data?.hostID.toString()
+                    publicIp = data?.publicIp.toString()
                     taskId = data?.taskId.toString()
+
+                    MainActivity.writeIP(publicIp)//写入ip地址
+
                     toModel()
+                    receiverIntent()
                 }else{
                     Toast.makeText(appContext, projectMess.message, Toast.LENGTH_SHORT).show()
                 }
@@ -435,7 +440,8 @@ fun startVrPre(){
             }
         } catch (e: Exception) {
             // 处理异常
-            Toast.makeText(appContext, "网络错误或网络地址错误", Toast.LENGTH_SHORT).show()
+            println("异常$e")
+            Toast.makeText(appContext, "网络错误或网络地址错误$e", Toast.LENGTH_SHORT).show()
         }
     }
 }
@@ -450,27 +456,27 @@ fun startVrPre(){
 
 //跳去模型
 fun toModel(){
+
+
     val prefs: SharedPreferences = appContext.getSharedPreferences("my_preferences", Context.MODE_PRIVATE)
     val savedServerUrl = prefs.getString("serverUrl", "")
-    val savedServerIP = prefs.getString("serverIP", "")
+//    val savedServerIP = prefs.getString("serverIP", "")
 
     val intent = Intent(MyApplication.instance, MainActivity::class.java)
-
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     intent.putExtra("serverUrl", savedServerUrl)
-    intent.putExtra("serverIP", savedServerIP)
-    intent.putExtra("projectId", projectId)
+    intent.putExtra("hostId", hostId)
     intent.putExtra("taskId", taskId)
 
     MyApplication.instance.startActivity(intent)
 }
 
-fun closeStream(){
-    CoroutineScope(Dispatchers.Main).launch {
-        val prefs: SharedPreferences = appContext.getSharedPreferences("my_preferences", Context.MODE_PRIVATE)
-        val savedServerIP = prefs.getString("serverIP", "")
-        val nonce = UUID.randomUUID().toString()
-        ProjectListViewModel().closeStream(VjMD5Tool.GetHardId(),savedServerIP,nonce,"vr","reboot",taskId)
-    }
-}
+//fun closeStream(){
+//    CoroutineScope(Dispatchers.Main).launch {
+//        val prefs: SharedPreferences = appContext.getSharedPreferences("my_preferences", Context.MODE_PRIVATE)
+//        val savedServerIP = prefs.getString("serverIP", "")
+//        val nonce = UUID.randomUUID().toString()
+//        ProjectListViewModel().closeStream(VjMD5Tool.GetHardId(),savedServerIP,nonce,"vr","reboot",taskId)
+//    }
+//}
 

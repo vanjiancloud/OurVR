@@ -49,7 +49,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cloudvr.module.appContext
 import com.example.cloudvr.ui.theme.*
-import com.picovr.cloudxr.VjDevice
+//import com.picovr.cloudxr.VjDevice
 import com.example.cloudvr.viewModel.UserViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -87,21 +87,21 @@ fun Login(){
     }
 
 
-    println("设备信息----本地IP:${VjDevice.getIPAddress()}")
-    println("设备信息----网络名称:${VjDevice.getNetworkName()}")
-    println("设备信息----设备型号:${VjDevice.getDeviceModel()}")
-    println("设备信息----内存:${VjDevice.getDeviceMemory(appContext)}")
-    println("设备信息----存储:${VjDevice.getDeviceStorage(appContext,0)}")
-    println("设备信息----SDK版本:${VjDevice.getDeviceSDK()}")
-    println("设备信息----android版本:${VjDevice.getDeviceAndroidVersion()}")
-    println("设备信息----电量百分比:${VjDevice.getDeviceBattery(appContext)}")
-    println("设备信息----设备标识符:${VjDevice.getDeviceId(appContext)}")
-
-    println("设备信息----制造商:${VjDevice.getDeviceManufacturer()}")
-    println("设备信息----设备名:${VjDevice.getDeviceName()}")
-    println("设备信息----产品名:${VjDevice.getProductName()}")
-    println("设备信息----品牌:${VjDevice.getDeviceBrand()}")
-    println("设备信息----硬件:${VjDevice.getDeviceHardware()}")
+//    println("设备信息----本地IP:${VjDevice.getIPAddress()}")
+//    println("设备信息----网络名称:${VjDevice.getNetworkName()}")
+//    println("设备信息----设备型号:${VjDevice.getDeviceModel()}")
+//    println("设备信息----内存:${VjDevice.getDeviceMemory(appContext)}")
+//    println("设备信息----存储:${VjDevice.getDeviceStorage(appContext,0)}")
+//    println("设备信息----SDK版本:${VjDevice.getDeviceSDK()}")
+//    println("设备信息----android版本:${VjDevice.getDeviceAndroidVersion()}")
+//    println("设备信息----电量百分比:${VjDevice.getDeviceBattery(appContext)}")
+//    println("设备信息----设备标识符:${VjDevice.getDeviceId(appContext)}")
+//
+//    println("设备信息----制造商:${VjDevice.getDeviceManufacturer()}")
+//    println("设备信息----设备名:${VjDevice.getDeviceName()}")
+//    println("设备信息----产品名:${VjDevice.getProductName()}")
+//    println("设备信息----品牌:${VjDevice.getDeviceBrand()}")
+//    println("设备信息----硬件:${VjDevice.getDeviceHardware()}")
 
 
     Box(
@@ -238,7 +238,7 @@ fun Login(){
                             } catch (e: Exception) {
                                 // 处理异常
                                 isLoading = false
-                                Toast.makeText(appContext, "网络错误或网络地址错误", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(appContext, e.message?:"网络错误或网络地址错误", Toast.LENGTH_SHORT).show()
                             }
                         }
                     },
