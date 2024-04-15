@@ -89,15 +89,15 @@ interface StartProjectService {
 }
 
 interface StartWebUIService {
-    @POST("{url}")
+    @POST("vr/batchAddWebUI")
     suspend fun StartWebUI(
-        @Url url: String, // 请求 URL
-        @Body requestBody: RequestBody // 请求体
-    ): StartWebUIResponse
+        @Query("taskId") taskId: String,
+        @Body requestBody: RequestBody
+    ): StartProjectResponse
 
     companion object {
         fun instance(): StartWebUIService {
-            return NetworkRpc.createService(StartWebUIService::class.java)
+            return Network.createService(StartWebUIService::class.java)
         }
     }
 }

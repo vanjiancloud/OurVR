@@ -2,13 +2,17 @@ package com.example.cloudvr
 
 
 
+import android.Manifest
 import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -17,6 +21,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -24,8 +30,10 @@ import androidx.navigation.compose.rememberNavController
 import com.example.cloudvr.module.appContext
 import com.example.cloudvr.ui.theme.CloudVRTheme
 import com.example.cloudvr.viewModel.UserViewModel
+import com.picovr.cloudxr.MainActivity
 
 open class HomeActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -42,10 +50,9 @@ open class HomeActivity : ComponentActivity() {
             prefs.edit().putString("serverProtocol", "https").apply()
         }
 
+        // 请求获取内存权限
+        requestStoragePermission()
 
-
-        //TODO  写死进入B作为校验
-//        startActivity(Intent(this,MainActivity::class.java))
         setContent {
             CloudVRTheme {
 //                // A surface container using the 'background' color from the theme
@@ -96,6 +103,20 @@ open class HomeActivity : ComponentActivity() {
                 println("Activity销毁时的回调")
             }
         })
+    }
+
+    private val requestPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+        if (isGranted) {
+            // 用户同意了权限请求，可以执行相关操作
+            // 可以在这里进行文件操作等
+        } else {
+            // 用户拒绝了权限请求，可以向用户解释为何需要这个权限
+        }
+    }
+
+    private fun requestStoragePermission() {
+        // 请求获取内存权限
+        requestPermissionLauncher.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     }
 }
 

@@ -18,7 +18,6 @@ import com.example.cloudvr.entity.ProjectTokenDataResponse
 import com.example.cloudvr.entity.StartProjectResponse
 import com.example.cloudvr.entity.StartWebUIResponse
 import com.example.cloudvr.module.appContext
-import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -102,21 +101,11 @@ class ProjectListViewModel : ViewModel() {
         return service.startProject(appliId, plateType = "2",token,senderId,nonce,hostId,mode,taskId,accessMode)
     }
 
-    suspend fun startWebUI(taskid: String, nonce: String, sender_id: String): StartWebUIResponse {
+    suspend fun startWebUI(taskId: String, wList: String): StartProjectResponse {
         val service = StartWebUIService.instance()
-        val json = """
-            {
-                taskid:$taskid,
-                nonce:$nonce,
-                sender_id:$sender_id,
-                "ReqData": {
-                    "data": "北京",
-                    "msgType": "WebUiUrl",
-                }
-            }
-        """.trimIndent()
-        val requestBody = json.toRequestBody("application/json".toMediaTypeOrNull())
-        return service.StartWebUI("api/v1/RpcReq",requestBody)
+        val requestBody = wList.toRequestBody("application/json".toMediaTypeOrNull())
+        println("WebSocket-----$wList$requestBody")
+        return service.StartWebUI(taskId,requestBody)
     }
     suspend fun closeVr(tag: String,taskid: String): StartWebUIResponse {
         val service = CloseVrService.instance()

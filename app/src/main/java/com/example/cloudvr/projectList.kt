@@ -64,6 +64,7 @@ import com.example.cloudvr.ui.theme.GrayBtn
 import com.example.cloudvr.viewModel.ProjectListViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import com.google.gson.Gson
 import com.picovr.cloudxr.MainActivity
 import com.picovr.cloudxr.VjMD5Tool
 import kotlinx.coroutines.CoroutineScope
@@ -75,7 +76,6 @@ import java.util.UUID
 
 var publicIp = ""
 var hostId = ""
-var taskId = ""
 var token = ""
 
 
@@ -387,15 +387,21 @@ fun receiverIntent(){
         override fun onReceive(context: Context?, intent: Intent?) {
             // 在这里处理接收到的广播内容
             val data = intent?.getIntExtra("CONTENT",-1)
-            println("vjSendBroadcast---------------$data")
+            val msg = intent?.getStringExtra("MSG")
+            println("vjSendBroadcast---------------$data,msg=$msg")
             // 加载模型
             if(data == 3){
                 val nonce = UUID.randomUUID().toString()
-                if (!taskId.isNullOrEmpty()&&!projectId.isNullOrEmpty()) {
+                if (!MyApplication.taskId.isNullOrEmpty()&&!projectId.isNullOrEmpty()) {
                     CoroutineScope(Dispatchers.Main).launch {
 //                        delay(10000)
-                        val res = ProjectListViewModel().startVr(appliId=projectId,token,senderId= VjMD5Tool.GetHardId(),nonce,hostId,mode="reboot",taskId,accessMode="1")
-                        println("启动成功！$res----$projectId---$taskId------$nonce---$hostId")
+                        val res = ProjectListViewModel().startVr(appliId=projectId,token,senderId= VjMD5Tool.GetHardId(),nonce,hostId,mode="reboot",MyApplication.taskId,accessMode="1")
+                        if(res.code == 0){
+                            val url = "wss://api.ourbim.com:11023/vjapi/websocket/${MyApplication.taskId}"
+                            val webSocketClient = WebSocketClient(url)
+                            webSocketClient.connect()
+                        }
+                        println("启动成功！$res----$projectId---$MyApplication.taskId------$nonce---$hostId")
                     }
                 }
             }
@@ -426,7 +432,8 @@ fun startVrPre(){
                     val data = projectMess.data
                     hostId = data?.hostID.toString()
                     publicIp = data?.publicIp.toString()
-                    taskId = data?.taskId.toString()
+                    MyApplication.taskId = data?.taskId.toString()
+
 
                     MainActivity.writeIP(publicIp)//写入ip地址
 
@@ -466,7 +473,7 @@ fun toModel(){
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     intent.putExtra("serverUrl", savedServerUrl)
     intent.putExtra("hostId", hostId)
-    intent.putExtra("taskId", taskId)
+    intent.putExtra("taskId", MyApplication.taskId)
 
     MyApplication.instance.startActivity(intent)
 }

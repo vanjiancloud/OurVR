@@ -25,7 +25,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -65,6 +65,7 @@ dependencies {
         }
     }
 
+//    implementation ("com.squareup.okhttp3:okhttp:4.9.1")
     implementation("com.google.accompanist:accompanist-swiperefresh:0.24.3-alpha")
     implementation("com.google.accompanist:accompanist-pager:0.24.3-alpha")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
