@@ -466,12 +466,13 @@ fun toModel(){
 
 
     val prefs: SharedPreferences = appContext.getSharedPreferences("my_preferences", Context.MODE_PRIVATE)
+    val serverProtocol = prefs.getString("serverProtocol", "")
     val savedServerUrl = prefs.getString("serverUrl", "")
 //    val savedServerIP = prefs.getString("serverIP", "")
 
     val intent = Intent(MyApplication.instance, MainActivity::class.java)
     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-    intent.putExtra("serverUrl", savedServerUrl)
+    intent.putExtra("serverUrl", "$serverProtocol://$savedServerUrl")
     intent.putExtra("hostId", hostId)
     intent.putExtra("taskId", MyApplication.taskId)
 
@@ -486,4 +487,5 @@ fun toModel(){
 //        ProjectListViewModel().closeStream(VjMD5Tool.GetHardId(),savedServerIP,nonce,"vr","reboot",taskId)
 //    }
 //}
+
 

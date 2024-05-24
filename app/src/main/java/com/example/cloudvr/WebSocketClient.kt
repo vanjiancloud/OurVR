@@ -55,13 +55,13 @@ class WebSocketClient(url: String): Activity() {
                                     val webuiType: String,//类型：1-跟随左手柄、2-跟随右手柄、3-跟随头盔、4-跟随BIM构件对象；说明：交互页面不可跟随右手柄
                                 )
                                 val dataArray = arrayOf(
-                                    wList("0000aaf1", "400","400","false","1","1","1","1","1","1","https://www.baidu.com","1"),
-                                    wList("0000aaf1", "400","400","false","1","1","1","1","1","1","https://www.ourbim.com/","3"),
+                                    wList("0000aaf1", "1920","1080","true","0","0","0","0","0","0","https://www.baidu.com","1"),
+                                    wList("0000aaf1", "1920","1080","false","0","0","0","0","0","0","https://www.ourbim.com/","3"),
                                 )
                                 val gson = Gson()
                                 val json = gson.toJson(dataArray)
                                 val res = ProjectListViewModel().startWebUI(MyApplication.taskId,json)
-
+                                println("WebSocket 加载完模型: $res")
                                 Handler(Looper.getMainLooper()).post(Runnable {
                                     Toast.makeText(appContext, res.message, Toast.LENGTH_SHORT).show()
                                 })
